@@ -1,8 +1,11 @@
-const Discord = require("discord.io");
+const Discord = require("discord.js");
 const auth = require("./auth.json");
 const { google } = require("googleapis");
 const fs = require("fs");
 const ytdl = require("ytdl-core");
+var events = require("events").EventEmitter;
+var emitter = new events.EventEmitter();
+
 // Initialize Discord Bot
 const youtube = google.youtube({
   version: "v3",
@@ -12,29 +15,34 @@ function generateYTURL(videoId) {
   return `https://www.youtube.com/watch?v=${videoId}`;
 }
 
+let voiceChannel;
+
 const fulaOrd = ["neger", "bög", "hej"];
 let harFultOrd;
 let voiceChannelID = "";
 const playList = [];
 var isPlaying = false;
-function searchYT(query, bot, voiceChannelID) {
-  youtube.search.list({ part: "snippet", q: query, maxResults: 1 }, function(
-    error,
-    data
-  ) {
-    const videoId = data.data.items[0].id.videoId;
-    playList.push(videoId);
-    if (isPlaying == false) {
-      playplayList(bot, voiceChannelID);
-      isPlaying = true;
+function searchYT(query, message) {
+  youtube.search.list(
+    { part: "snippet", q: query, maxResults: 1, type: "video" },
+    function(error, data) {
+      const videoId = data.data.items[0].id.videoId;
+      const items = data.data.items[0].id;
+      console.log({ items });
+      console.log({ videoId });
+      playList.push(videoId);
+      if (isPlaying == false) {
+        playplayList(message);
+        isPlaying = true;
+      }
     }
-  });
+  );
 }
 function isYTURL(url) {
   return url.includes("youtube.com");
 }
-function playplayList(bot, voiceChannelID) {
-  bot.getAudioContext(voiceChannelID, function(error, stream) {
+async function playplayList(message) {
+  /*bot.getAudioContext(voiceChannelID, function(error, stream) {
     if (error) return console.error(error);
     let song = "";
     if (isYTURL(playList[0])) {
@@ -53,108 +61,102 @@ function playplayList(bot, voiceChannelID) {
       playList.shift();
       playplayList(bot, voiceChannelID);
     });
+  });*/
+  let song = "";
+  if (isYTURL(playList[0])) {
+    song = playList[0];
+  } else {
+    console.log("before generate " + playList[0]);
+    song = generateYTURL(playList[0]);
+  }
+  console.log("after generate " + song);
+
+  const connection = await bot.channels
+    .get(message.member.voiceChannelID)
+    .join();
+  const ytdl = require("ytdl-core");
+  const dispatcher = connection.playStream(ytdl(song, { filter: "audioonly" }));
+  /*setTimeout(function() {
+    dispatcher.pause();
+  }, 5000);*/
+  emitter.on("Pause", function() {
+    dispatcher.pause();
+  });
+  emitter.on("skip", function() {
+    dispatcher.destroy();
+    playList.shift();
+    playplayList(bot, voiceChannelID);
+  });
+  emitter.on("play", function() {
+    dispatcher.resume();
+  });
+  dispatcher.on("finish", () => {
+    playList.shift();
+    playplayList(bot, voiceChannelID);
   });
 }
-var bot = new Discord.Client({
-  token: auth.token,
-  autorun: true
-});
+
+const bot = new Discord.Client();
+bot.login(auth.token);
 bot.on("ready", function(evt) {
+  console.log(Date.now());
   console.log("Connected");
   console.log("Logged in as: ");
   console.log(bot.username + " - (" + bot.id + ")");
 });
-bot.on("message", function(user, userID, channelID, message, evt) {
+bot.on("message", message => {
   fulaOrd.forEach(ord => {
-    harFultOrd = message.includes(ord);
-
-    if (harFultOrd == true) {
-      const opts = {
-        channelID: channelID,
-        messageID: evt.d.id
-      };
-
-      bot.deleteMessage(opts, (err, resp) => {
-        console.log(err);
-        console.log(resp);
-      });
-    }
+    harFultOrd = message.content.includes(ord);
   });
 
-  if (message.substring(0, 1) == "!") {
-    let args = message.substring(1).split(" ");
+  if (message.content.substring(0, 1) == "!") {
+    let args = message.content.substring(1).split(" ");
     const cmd = args[0];
     args = args.splice(1);
 
     switch (cmd) {
       case "ping":
-        bot.sendMessage({
-          to: channelID,
-          message: "Pong!"
-        });
+        message.channel.send("Pong!");
         break;
       case "tjo":
-        bot.sendMessage({
-          to: channelID,
-          message: "hej!"
-        });
+        message.channel.send("hej!");
         break;
       case "play":
+        console.log("play args", args[0]);
         if (args[0] && isYTURL(args[0])) {
           playList.push(args[0]);
         } else {
-          searchYT(args.join(" "), bot, voiceChannelID);
+          searchYT(args.join(" "), message);
         }
         if (isPlaying == false && isYTURL(args[0])) {
-          playplayList(bot, voiceChannelID);
+          playplayList(message);
+
           isPlaying = true;
         }
-        bot.sendMessage({
-          to: channelID,
-          message: "du lade till en låt i spellistan"
-        });
+        message.channel.send("du lade till en låt i spellistan");
         break;
       case "resume":
-        bot.sendMessage({
-          to: channelID,
-          message: "du fortsatt uppspelningen"
-        });
+        message.channel.send("du fortsatt uppspelningen");
+        emitter.emit("play");
         break;
-      case "stop":
-        bot.sendMessage({
-          to: channelID,
-          message: "du stoppade uppspelningen!"
-        });
+      case "pause":
+        message.channel.send("du pausade uppspelningen");
+        emitter.emit("Pause");
+
         break;
       case "join":
-        bot.joinVoiceChannel(args[0]);
-        voiceChannelID = args[0];
-        bot.sendMessage({
-          to: channelID,
-          message: "du bjöd in botten!"
-        });
+        voiceChannel = bot.channels.find("name", "Music");
+        voiceChannel.join();
+        message.channel.send("du bjöd in botten!");
         break;
       case "kick":
-        bot.leaveVoiceChannel(args[0]);
-        bot.sendMessage({
-          to: channelID,
-          message: "botten blev sparkad!"
-        });
+        voiceChannel.leave();
         break;
       case "skip":
-        bot.sendMessage({
-          to: channelID,
-          message: "du skippade låten!"
-        });
+        message.channel.send("du skippade låten!");
+        emitter.emit("skip");
+
         break;
-      case "badWord":
-        fulaOrd.push(args[0]);
-        break;
-      default:
-        bot.sendMessage({
-          to: channelID,
-          message: evt.d.id
-        });
 
       // Just add any case commands if you want to..
     }
