@@ -32,7 +32,7 @@ function searchYT(query, message) {
       console.log({ videoId });
       playList.push(videoId);
       if (isPlaying == false) {
-        playplayList(message);
+        playPlayList(message);
         isPlaying = true;
       }
     }
@@ -41,7 +41,7 @@ function searchYT(query, message) {
 function isYTURL(url) {
   return url.includes("youtube.com");
 }
-async function playplayList(message) {
+async function playPlayList(message) {
   /*bot.getAudioContext(voiceChannelID, function(error, stream) {
     if (error) return console.error(error);
     let song = "";
@@ -85,14 +85,14 @@ async function playplayList(message) {
   emitter.on("skip", function() {
     dispatcher.destroy();
     playList.shift();
-    playplayList(bot, voiceChannelID);
+    playPlayList(bot, voiceChannelID);
   });
   emitter.on("play", function() {
     dispatcher.resume();
   });
   dispatcher.on("finish", () => {
     playList.shift();
-    playplayList(bot, voiceChannelID);
+    playPlayList(bot, voiceChannelID);
   });
 }
 
@@ -129,7 +129,7 @@ bot.on("message", message => {
           searchYT(args.join(" "), message);
         }
         if (isPlaying == false && isYTURL(args[0])) {
-          playplayList(message);
+          playPlayList(message);
 
           isPlaying = true;
         }
