@@ -7,9 +7,9 @@ const oauth_signature_method = "HMAC-SHA1";
 const oauth_timestamp = Math.round(Date.now() / 1000);
 const oauth_token = auth.Access_token;
 const oauth_version = "1.0";
-const status = "Hello Ladies + Gentlemen, a signed OAuth request!";
+const status = "Hello World!!";
 const signing_key = `${encodeURIComponent(
-  auth.API_Secret_Key
+  auth.API_Secret_key
 )}&${encodeURIComponent(auth.Access_token_secret)}`;
 let apiURL = "https://api.twitter.com/1.1/statuses/update.json";
 const oauth_signature = createSignature();
@@ -107,5 +107,6 @@ async function CreateTweet() {
     options
   );
   const body = await request.json();
+  console.log(body);
 }
 CreateTweet();
