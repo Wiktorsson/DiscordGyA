@@ -1,0 +1,17 @@
+{{> menu }}
+<header>
+    <a href="/createNews/" class="ingaNews">
+</header>
+{{#if hasPosts}}
+    {{#each posts}}
+      <article>
+           <a class="readmore" href="/news/{{_id}}"> 
+                <h2 class="titel">{{title}}</h2>
+                <p class="content">{{content}}..</p>
+                <p class="namn"><span class="primary">{{name}}</span></p>
+            </a>
+        </article>
+    {{/each}}
+{{else}}
+    <h2> inga nyheter hittades</h2>
+{{/if}}

@@ -5,14 +5,14 @@ function ping(message) {
 function tjo(message) {
   message.channel.send("tja!");
 }
-function play(message, args, bot) {
+function play(message, args, bot, emitter) {
   if (args[0] && yt.isYTURL(args[0])) {
     playList.push(args[0]);
   } else {
-    yt.searchYT(args.join(" "), message, bot);
+    yt.searchYT(args.join(" "), message, bot, emitter);
   }
   if (yt.isPlaying == false && yt.isYTURL(args[0])) {
-    yt.playPlayList(message, bot);
+    yt.playPlayList(message, bot, emitter);
 
     yt.isPlaying = true;
   }

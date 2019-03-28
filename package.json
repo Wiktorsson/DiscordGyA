@@ -4,14 +4,18 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon bot.js"
+    "start": "nodemon bot.js",
+    "startserver": "nodemon server.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "body-parser": "^1.18.3",
     "discord.js": "^11.4.2",
     "express": "^4.16.4",
+    "express-handlebars": "^3.0.0",
     "googleapis": "^35.0.0",
+    "mongodb": "^3.1.13",
     "node-fetch": "^2.3.0",
     "nodemon": "^1.18.6",
     "opusscript": "0.0.6",

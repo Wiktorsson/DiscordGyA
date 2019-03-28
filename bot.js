@@ -3,6 +3,8 @@ const Discord = require("discord.js");
 const auth = require("./auth.json");
 const coms = require("./kommandon.js");
 const bot = new Discord.Client();
+var events = require("events").EventEmitter;
+var emitter = new events.EventEmitter();
 bot.login(auth.token);
 bot.on("ready", function() {});
 bot.on("message", message => {
@@ -20,7 +22,7 @@ bot.on("message", message => {
           coms.tjo(message);
           break;
         case "play":
-          coms.play(message, args, bot);
+          coms.play(message, args, bot, emitter);
           break;
         case "resume":
           coms.resume(message, emitter);

@@ -1,0 +1,10 @@
+{{> menu }}
+<article>
+    <p><span class="primary">{{post.title}} </span></p>
+    <p>{{post.content}}</p>
+    <p class="author">{{post.name}}</p>
+    {{#if isAdmin}}
+    <a class="primary" href="/news/edit/{{post._id}}">Editera</a>
+     <a class="danger" href="/news/delete/{{post._id}}">Ta bort</a>
+     {{/if}}
+</article>

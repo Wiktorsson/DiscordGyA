@@ -1,0 +1,13 @@
+{{> menu }}
+<form method="POST" action="/news/edit/{{news._id}}">
+    <div class="newsContainer">
+    <input type="text" name="name" value="{{news.name}}">
+    <input type="Text" name="title" value="{{news.title}}">
+    </div>
+    <div class="newsContent">
+    <textarea>{{news.content}}</textarea>
+    </div>
+   <input type="button" value="Send" style="float: right;">
+
+
+</form>

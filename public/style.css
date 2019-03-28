@@ -1,0 +1,131 @@
+p {
+    
+}
+.siteContainer p {
+    list-style-type: none;
+    max-width: 75%;
+    max-height: 50%;
+    background-color: yellow;
+    border: 1px solid black;
+    overflow: auto;
+    position: sticky;
+    display: block;
+    margin: 0 auto;
+    margin-top: 5px;
+
+}
+
+article {
+    margin: 20px auto;
+    text-align: center;
+    border: 1px solid black;
+    background-color: yellow;
+    width: 500px;
+    height: auto;
+}
+a.readmore
+{
+    text-decoration: none;
+    color: inherit;
+}
+article:hover
+{
+    background-color: gold;
+}
+h2.titel
+{
+    font-size: 21px;
+}
+p.namn {
+    color: black;
+    text-align: right;
+}
+p.content {
+    color: black;
+}
+ul {
+    list-style-type: none;
+    max-width: 75%;
+    background-color: silver;
+    border: 1px solid black;
+    overflow: auto;
+    position: sticky;
+    display: block;
+    margin: 0 auto;
+}
+
+
+body { 
+    margin: 0;
+}
+a.menu {
+    text-decoration: none;
+}
+li a:hover {
+    color: white;
+    background-color: grey;
+}
+li a {
+    color: black;    
+    display: inline;
+    padding: 8px 16px;
+    float: left;
+}
+
+a.primary
+{
+    text-decoration: none;
+    color: inherit;
+
+}
+a.primary:hover{
+    font-weight: bold;
+}
+
+span.primary
+{
+    font-size: 17px;
+    font-weight: bold;
+}
+.ingaNews
+{
+    text-decoration: none;
+    color: inherit;
+    text-align: center;
+}
+a.ingaNews:hover
+{
+    color: blue;
+}
+.newsContainer
+{
+    margin-top: 5px;
+    margin-left: 16%;
+    margin-bottom: 5px; 
+}
+.newsContent
+{
+    margin-left: 16%;
+}
+p.author
+{
+    text-align: right;
+    font-style: italic;
+}
+
+a.danger
+{
+    text-decoration: none;
+    color: inherit;  
+}
+a.danger:hover{
+    font-weight: bold;
+}
+.megaDiv
+{
+    height: 200px;
+    width: 500px;
+    background-color: silver;
+    border: 1px solid black;
+    margin: 0 auto;
+}
