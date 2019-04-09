@@ -46,28 +46,28 @@ async function playPlayList(message, bot, emitter) {
 
   youtube.search.list(
     { part: "snippet", q: song, maxResults: 1, type: "video" },
-    function(error, data) {
+    async function(error, data) {
       const db = await connect();
-  const collection = db.collection("toplist");
-  const dbsong = collection.find({ ytURL: song }).toArray();
-  if (dbsong.length) {
-    collection.findOneAndUpdate(
-      { ytURL: song },
-      {
-        $set: {
+      const collection = db.collection("toplist");
+      const dbsong = collection.find({ ytURL: song }).toArray();
+      if (dbsong.length) {
+        collection.findOneAndUpdate(
+          { ytURL: song },
+          {
+            $set: {
+              ytURL: song,
+              plays: dbsong[0].plays + 1,
+              name: data.data.items[0].snippet.title
+            }
+          }
+        );
+      } else {
+        collection.insertOne({
           ytURL: song,
-          plays: dbsong[0].plays + 1,
+          plays: 1,
           name: data.data.items[0].snippet.title
-        }
+        });
       }
-    );
-  } else {
-    collection.insertOne({
-      ytURL: song,
-      plays: 1,
-      name: data.data.items[0].snippet.title
-    });
-  }
     }
   );
   voiceChannelID = voiceChannelID

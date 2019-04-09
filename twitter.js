@@ -1,4 +1,5 @@
 const auth = require("./auth.json");
+const connect = require("./models/connect.js");
 const fetch = require("node-fetch");
 var crypto = require("crypto");
 const oauth_consumer_key = auth.API_Key;
@@ -93,10 +94,10 @@ function createHeaderstring() {
   console.log(DST);
   return DST;
 }
-async function CreateTweet() {
+async function CreateTweet(tweet) {
   const options = {
     method: "post",
-    body: `status=${encodeURIComponent(status).replace(/!/g, "%21")}`,
+    body: `status=${encodeURIComponent(tweet).replace(/!/g, "%21")}`,
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
       Authorization: createHeaderstring()
@@ -109,4 +110,21 @@ async function CreateTweet() {
   const body = await request.json();
   console.log(body);
 }
-CreateTweet();
+async function AutoPost() {
+  const newsposts = {
+    name: "bot",
+    title: "Veckans mest spelade låtar!",
+    content:
+      'Se veckans mest spelade låtar <a href="http://localhost:1111/topplista">Här</a>'
+  };
+  const db = await connect();
+  const collection = db.collection("newsposts");
+  const news = await collection.insertOne(newsposts);
+
+  const tweet = `Se veckans mest spelade låtar http://localhpst:1111/news/${
+    news._id
+  }`;
+  CreateTweet(tweet);
+}
+
+AutoPost();

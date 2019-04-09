@@ -1,0 +1,10 @@
+{{>menu}}
+{{#if hasPosts}}
+    {{#each posts}}
+      <article>
+                <a href="{{ytURL}}" class="content">{{name}} - Plays {{plays}}</a>
+        </article>
+    {{/each}}
+{{else}}
+    <h2> inga nyheter hittades</h2>
+{{/if}}

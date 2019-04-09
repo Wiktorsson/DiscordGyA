@@ -4,6 +4,10 @@ const connect = require("./models/connect.js");
 const bodyParser = require("body-parser");
 const app = express();
 const ObjectId = require("mongodb").ObjectId;
+const CronJob = require("cron").CronJob;
+const AutoPost = require("./twitter.js");
+new CronJob("0 0 * * 0", AutoPost, null, true, "America/Los_Angeles");
+
 app.use(bodyParser.urlencoded());
 app.use("/static", express.static("public"));
 app.post("/news/create", async (request, response) => {
@@ -23,7 +27,7 @@ app.engine("handlebars", handlebars({ defaultLayout: "main" }));
 app.set("view engine", "handlebars");
 
 app.get("/", (request, response) => {
-  response.render("home");
+  response.redirect("/news");
 });
 
 app.get("/sida2", (request, response) => {
@@ -35,6 +39,19 @@ app.get("/news", async (request, response) => {
   const collection = db.collection("newsposts");
   const newsposts = await collection.find().toArray();
   response.render("news", {
+    hasPosts: newsposts.length,
+    posts: newsposts
+  });
+});
+
+app.get("/topplista", async (request, response) => {
+  const db = await connect();
+  const collection = db.collection("toplist");
+  const newsposts = await collection
+    .find()
+    .sort({ plays: -1 })
+    .toArray();
+  response.render("topplista", {
     hasPosts: newsposts.length,
     posts: newsposts
   });

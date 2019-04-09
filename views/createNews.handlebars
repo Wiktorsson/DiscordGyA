@@ -1,15 +1,18 @@
 {{> menu }}
 <form method="POST" action="/news/create">
     <div class="megaDiv">
-        <h2> Skapa Nyhet</h2>
+        <h2 class="h2"> Skapa Nyhet</h2>
         <div class="newsContainer">
             <input type="text" name="name" placeholder="Namn">
             <input type="text" name="title" placeholder="Titel">
         </div>
         <div class="newsContent">
-            <textarea placeholder="Content" name="content"></textarea>
+            <textarea placeholder="Content" name="content" class="content"></textarea>
         </div>
-    <button type="submit">Send</button>
+        <div class="flexRight">
+             <button type="submit"class="fittKnapp">Send</button>
+        </div>
+
     </div>
     
 

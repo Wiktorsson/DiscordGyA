@@ -123,9 +123,27 @@ a.danger:hover{
 }
 .megaDiv
 {
-    height: 200px;
+    height: auto;
     width: 500px;
     background-color: silver;
     border: 1px solid black;
     margin: 0 auto;
+}
+textarea.content 
+{
+    width: 320px;
+    height: 100px;
+}
+h2.h2
+{
+    text-align: center;
+}
+.flexRight
+{
+    display: flex;
+    justify-content: flex-end;
+}
+.fittKnapp
+{
+    margin: 20px;
 }
