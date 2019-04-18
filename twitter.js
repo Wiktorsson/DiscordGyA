@@ -8,12 +8,10 @@ const oauth_signature_method = "HMAC-SHA1";
 const oauth_timestamp = Math.round(Date.now() / 1000);
 const oauth_token = auth.Access_token;
 const oauth_version = "1.0";
-const status = "Hello World!!";
 const signing_key = `${encodeURIComponent(
   auth.API_Secret_key
 )}&${encodeURIComponent(auth.Access_token_secret)}`;
 let apiURL = "https://api.twitter.com/1.1/statuses/update.json";
-const oauth_signature = createSignature();
 
 function makeid() {
   var text = "";
@@ -26,7 +24,7 @@ function makeid() {
   return text;
 }
 
-function createSignature() {
+function createSignature(tweet) {
   let txt = "";
 
   txt += `${encodeURIComponent("include_entities")}=${encodeURIComponent(
@@ -50,7 +48,7 @@ function createSignature() {
   txt += `${encodeURIComponent("oauth_version")}=${encodeURIComponent(
     oauth_version
   )}&`;
-  txt += `${encodeURIComponent("status")}=${encodeURIComponent(status).replace(
+  txt += `${encodeURIComponent("status")}=${encodeURIComponent(tweet).replace(
     /!/g,
     "%21"
   )}`;
@@ -68,7 +66,7 @@ function createSignature() {
   return signature;
 }
 
-function createHeaderstring() {
+function createHeaderstring(signature) {
   let DST = "OAuth ";
   DST += `${encodeURIComponent("oauth_consumer_key")}="${encodeURIComponent(
     oauth_consumer_key
@@ -77,7 +75,7 @@ function createHeaderstring() {
     oauth_nonce
   )}", `;
   DST += `${encodeURIComponent("oauth_signature")}="${encodeURIComponent(
-    oauth_signature
+    signature
   )}", `;
   DST += `${encodeURIComponent("oauth_signature_method")}="${encodeURIComponent(
     oauth_signature_method
@@ -95,12 +93,13 @@ function createHeaderstring() {
   return DST;
 }
 async function CreateTweet(tweet) {
+  const signature = createSignature(tweet);
   const options = {
     method: "post",
     body: `status=${encodeURIComponent(tweet).replace(/!/g, "%21")}`,
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
-      Authorization: createHeaderstring()
+      Authorization: createHeaderstring(signature)
     }
   };
   const request = await fetch(
@@ -120,11 +119,11 @@ async function AutoPost() {
   const db = await connect();
   const collection = db.collection("newsposts");
   const news = await collection.insertOne(newsposts);
-
-  const tweet = `Se veckans mest spelade låtar http://localhpst:1111/news/${
-    news._id
+  console.log(news);
+  const tweet = `Se veckans mest spelade låtar http://localhost:1111/news/${
+    news.insertedId
   }`;
   CreateTweet(tweet);
 }
 
-AutoPost();
+module.exports = AutoPost;

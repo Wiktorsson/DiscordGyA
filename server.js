@@ -56,6 +56,10 @@ app.get("/topplista", async (request, response) => {
     posts: newsposts
   });
 });
+app.get("/autopost", async (request, response) => {
+  AutoPost();
+  response.redirect(`/news`);
+});
 
 app.get("/news/edit/:id", async (request, response) => {
   const db = await connect();

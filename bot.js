@@ -38,7 +38,7 @@ bot.on("message", message => {
           coms.leave(message);
           break;
         case "skip":
-          coms.skip(message);
+          coms.skip(message, emitter);
 
           break;
       }

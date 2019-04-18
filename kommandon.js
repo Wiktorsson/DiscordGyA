@@ -23,7 +23,7 @@ function join(message, bot) {
   voiceChannel.join();
   message.channel.send("du bjöd in botten!");
 }
-function skip(message) {
+function skip(message, emitter) {
   message.channel.send("du skippade låten!");
   emitter.emit("skip");
 }
@@ -45,5 +45,6 @@ module.exports = {
   join,
   resume,
   pause,
-  leave
+  leave,
+  skip
 };

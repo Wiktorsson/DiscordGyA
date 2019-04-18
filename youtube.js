@@ -38,10 +38,14 @@ function isYTURL(url) {
 }
 async function playPlayList(message, bot, emitter) {
   let song = "";
-  if (isYTURL(playList[0])) {
-    song = playList[0];
+  if (playList[0]) {
+    if (isYTURL(playList[0])) {
+      song = playList[0];
+    } else {
+      song = generateYTURL(playList[0]);
+    }
   } else {
-    song = generateYTURL(playList[0]);
+    return message.channel.send("spellistan är tom lägg till nya");
   }
 
   youtube.search.list(
@@ -49,7 +53,10 @@ async function playPlayList(message, bot, emitter) {
     async function(error, data) {
       const db = await connect();
       const collection = db.collection("toplist");
-      const dbsong = collection.find({ ytURL: song }).toArray();
+      const dbsong = await collection.find({ ytURL: song }).toArray();
+      message.channel.send(
+        `just nu spelas ${data.data.items[0].snippet.title}`
+      );
       if (dbsong.length) {
         collection.findOneAndUpdate(
           { ytURL: song },
@@ -82,14 +89,15 @@ async function playPlayList(message, bot, emitter) {
   emitter.on("skip", function() {
     dispatcher.destroy();
     playList.shift();
-    playPlayList(bot, voiceChannelID, bot, emitter);
+    playPlayList(message, bot, emitter);
   });
   emitter.on("play", function() {
     dispatcher.resume();
   });
-  dispatcher.on("finish", () => {
+  dispatcher.on("end", () => {
+    dispatcher.destroy();
     playList.shift();
-    playPlayList(bot, voiceChannelID, bot, emitter);
+    playPlayList(message, bot, emitter);
   });
 }
 module.exports = {
