@@ -1,39 +1,40 @@
-const yt = require("./youtube.js");
+const yt = require('./youtube.js');
+
 function ping(message) {
-  message.channel.send("Pong!");
+  message.channel.send('Pong!');
 }
 function tjo(message) {
-  message.channel.send("tja!");
+  message.channel.send('tja!');
 }
 function play(message, args, bot, emitter) {
   if (args[0] && yt.isYTURL(args[0])) {
-    playList.push(args[0]);
+    yt.playPlayList.push(args[0]);
   } else {
-    yt.searchYT(args.join(" "), message, bot, emitter);
+    yt.searchYT(args.join(' '), message, bot, emitter);
   }
   if (yt.isPlaying == false && yt.isYTURL(args[0])) {
     yt.playPlayList(message, bot, emitter);
 
     yt.isPlaying = true;
   }
-  message.channel.send("du lade till en låt i spellistan");
+  message.channel.send('du lade till en låt i spellistan');
 }
 function join(message, bot) {
-  voiceChannel = bot.channels.find("name", "Music");
+  voiceChannel = bot.channels.find('name', 'Music');
   voiceChannel.join();
-  message.channel.send("du bjöd in botten!");
+  message.channel.send('du bjöd in botten!');
 }
 function skip(message, emitter) {
-  message.channel.send("du skippade låten!");
-  emitter.emit("skip");
+  message.channel.send('du skippade låten!');
+  emitter.emit('skip');
 }
 function resume(message, emitter) {
-  message.channel.send("du fortsatt uppspelningen");
-  emitter.emit("play");
+  message.channel.send('du fortsatt uppspelningen');
+  emitter.emit('play');
 }
 function pause(message, emitter) {
-  message.channel.send("du pausade uppspelningen");
-  emitter.emit("Pause");
+  message.channel.send('du pausade uppspelningen');
+  emitter.emit('Pause');
 }
 function leave(message) {
   voiceChannel.leave();
@@ -46,5 +47,5 @@ module.exports = {
   resume,
   pause,
   leave,
-  skip
+  skip,
 };

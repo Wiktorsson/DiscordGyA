@@ -5,7 +5,7 @@ p {
     list-style-type: none;
     max-width: 75%;
     max-height: 50%;
-    background-color: yellow;
+    background-color: #F7CABB;
     border: 1px solid black;
     overflow: auto;
     position: sticky;
@@ -19,8 +19,8 @@ article {
     margin: 20px auto;
     text-align: center;
     border: 1px solid black;
-    background-color: yellow;
-    width: 500px;
+    background-color: #F7CABB;
+    width: 800px;
     height: auto;
 }
 a.readmore
@@ -30,7 +30,7 @@ a.readmore
 }
 article:hover
 {
-    background-color: gold;
+    background-color: #E4AB9A;
 }
 h2.titel
 {
@@ -140,8 +140,8 @@ h2.h2
 }
 .flexRight
 {
-    display: flex;
-    justify-content: flex-end;
+    margin-left: 353px;
+    margin-bottom: 15px;
 }
 .fittKnapp
 {
