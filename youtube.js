@@ -6,6 +6,7 @@ let voiceChannel;
 let voiceChannelID = "";
 const playList = [];
 let isPlaying = false;
+let ended = false;
 const connect = require("./models/connect");
 
 // Initialize Discord Bot
@@ -45,7 +46,10 @@ async function playPlayList(message, bot, emitter) {
       song = generateYTURL(playList[0]);
     }
   } else {
-    return message.channel.send("spellistan är tom lägg till nya");
+    if (!ended) {
+      ended = true;
+      return message.channel.send("spellistan är tom lägg till nya");
+    }
   }
 
   youtube.search.list(
@@ -80,6 +84,9 @@ async function playPlayList(message, bot, emitter) {
   voiceChannelID = voiceChannelID
     ? voiceChannelID
     : message.member.voiceChannelID;
+  if (!voiceChannelID) {
+    return message.channel.send("Du måste vara i samma channel som boten!");
+  }
   const connection = await bot.channels.get(voiceChannelID).join();
   const dispatcher = connection.playStream(ytdl(song, { filter: "audioonly" }));
   emitter.on("Pause", function() {
