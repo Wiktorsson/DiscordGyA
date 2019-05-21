@@ -1,21 +1,18 @@
-const { google } = require('googleapis');
-const ytdl = require('ytdl-core');
-const auth = require('./auth.json');
+const { google } = require("googleapis");
+const ytdl = require("ytdl-core");
+const auth = require("./auth.json");
 
-let voiceChannelID = '';
+let voiceChannelID = "";
 const playList = [];
 let isPlaying = false;
-<<<<<<< HEAD
-const connect = require('./models/connect');
-=======
+
 let ended = false;
 const connect = require("./models/connect");
->>>>>>> master
 
 // Initialize Discord Bot
 const youtube = google.youtube({
-  version: 'v3',
-  auth: auth.youtube,
+  version: "v3",
+  auth: auth.youtube
 });
 function generateYTURL(videoId) {
   return `https://www.youtube.com/watch?v=${videoId}`;
@@ -23,29 +20,29 @@ function generateYTURL(videoId) {
 function searchYT(query, message, bot, emitter) {
   youtube.search.list(
     {
-      part: 'snippet',
+      part: "snippet",
       q: query,
       maxResults: 1,
-      type: 'video',
+      type: "video"
     },
     (error, data) => {
       const { videoId } = data.data.items[0].id;
       playList.push(videoId);
       if (!videoId) {
-        message.channel.send('Hittade ingen låt');
+        message.channel.send("Hittade ingen låt");
       }
       if (isPlaying === false) {
         playPlayList(message, bot, emitter);
         isPlaying = true;
       }
-    },
+    }
   );
 }
 function isYTURL(url) {
-  return url.includes('youtube.com');
+  return url.includes("youtube.com");
 }
 async function playPlayList(message, bot, emitter) {
-  let song = '';
+  let song = "";
   if (playList[0]) {
     if (isYTURL(playList[0])) {
       song = playList[0];
@@ -53,7 +50,6 @@ async function playPlayList(message, bot, emitter) {
       song = generateYTURL(playList[0]);
     }
   } else {
-
     if (!ended) {
       ended = true;
       return message.channel.send("spellistan är tom lägg till nya");
@@ -62,17 +58,17 @@ async function playPlayList(message, bot, emitter) {
 
   youtube.search.list(
     {
-      part: 'snippet',
+      part: "snippet",
       q: song,
       maxResults: 1,
-      type: 'video',
+      type: "video"
     },
     async (error, data) => {
       const db = await connect();
-      const collection = db.collection('toplist');
+      const collection = db.collection("toplist");
       const dbsong = await collection.find({ ytURL: song }).toArray();
       message.channel.send(
-        `just nu spelas ${data.data.items[0].snippet.title}`,
+        `just nu spelas ${data.data.items[0].snippet.title}`
       );
       if (dbsong.length) {
         collection.findOneAndUpdate(
@@ -81,43 +77,40 @@ async function playPlayList(message, bot, emitter) {
             $set: {
               ytURL: song,
               plays: dbsong[0].plays + 1,
-              name: data.data.items[0].snippet.title,
-            },
-          },
+              name: data.data.items[0].snippet.title
+            }
+          }
         );
       } else {
         collection.insertOne({
           ytURL: song,
           plays: 1,
-          name: data.data.items[0].snippet.title,
+          name: data.data.items[0].snippet.title
         });
       }
-    },
+    }
   );
-<<<<<<< HEAD
-  voiceChannelID = voiceChannelID || message.member.voiceChannelID;
-=======
+
   voiceChannelID = voiceChannelID
     ? voiceChannelID
     : message.member.voiceChannelID;
   if (!voiceChannelID) {
     return message.channel.send("Du måste vara i samma channel som boten!");
   }
->>>>>>> master
   const connection = await bot.channels.get(voiceChannelID).join();
-  const dispatcher = connection.playStream(ytdl(song, { filter: 'audioonly' }));
-  emitter.on('Pause', () => {
+  const dispatcher = connection.playStream(ytdl(song, { filter: "audioonly" }));
+  emitter.on("Pause", () => {
     dispatcher.pause();
   });
-  emitter.on('skip', () => {
+  emitter.on("skip", () => {
     dispatcher.destroy();
     playList.shift();
     playPlayList(message, bot, emitter);
   });
-  emitter.on('play', () => {
+  emitter.on("play", () => {
     dispatcher.resume();
   });
-  dispatcher.on('end', () => {
+  dispatcher.on("end", () => {
     dispatcher.destroy();
     playList.shift();
     playPlayList(message, bot, emitter);
@@ -128,5 +121,5 @@ module.exports = {
   generateYTURL,
   searchYT,
   isYTURL,
-  isPlaying,
+  isPlaying
 };
