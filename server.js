@@ -114,4 +114,8 @@ app.get('/news/delete/:id', async (request, respone) => {
   await collection.findOneAndDelete({ _id: ObjectId(id) });
   respone.redirect('/news');
 });
+<<<<<<< HEAD
 app.listen(1111, () => console.log('Application is running on port 1111'));
+=======
+app.listen(5056, () => console.log("Application is running on port 5056"));
+>>>>>>> master

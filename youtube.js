@@ -5,7 +5,12 @@ const auth = require('./auth.json');
 let voiceChannelID = '';
 const playList = [];
 let isPlaying = false;
+<<<<<<< HEAD
 const connect = require('./models/connect');
+=======
+let ended = false;
+const connect = require("./models/connect");
+>>>>>>> master
 
 // Initialize Discord Bot
 const youtube = google.youtube({
@@ -48,7 +53,11 @@ async function playPlayList(message, bot, emitter) {
       song = generateYTURL(playList[0]);
     }
   } else {
-    return message.channel.send('spellistan är tom lägg till nya');
+
+    if (!ended) {
+      ended = true;
+      return message.channel.send("spellistan är tom lägg till nya");
+    }
   }
 
   youtube.search.list(
@@ -85,7 +94,16 @@ async function playPlayList(message, bot, emitter) {
       }
     },
   );
+<<<<<<< HEAD
   voiceChannelID = voiceChannelID || message.member.voiceChannelID;
+=======
+  voiceChannelID = voiceChannelID
+    ? voiceChannelID
+    : message.member.voiceChannelID;
+  if (!voiceChannelID) {
+    return message.channel.send("Du måste vara i samma channel som boten!");
+  }
+>>>>>>> master
   const connection = await bot.channels.get(voiceChannelID).join();
   const dispatcher = connection.playStream(ytdl(song, { filter: 'audioonly' }));
   emitter.on('Pause', () => {
